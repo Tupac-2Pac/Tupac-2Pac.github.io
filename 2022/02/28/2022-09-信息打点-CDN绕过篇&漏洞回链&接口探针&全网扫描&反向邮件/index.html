@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="知识点：        CDN:内容分发网络 关键技术有内容存储和分发技术 解决访问的速度问题0、CDN知识-工作原理及阻碍1、CDN配置-域名&amp;区域&amp;类型2、CDN绕过-靠谱十余种技战法3、CDN绑定-HOSTS绑定指向访问                      前置知识：        1.传统访问：用户访问域名–&gt;解析服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022-09-信息打点-CDN绕过篇&amp;漏洞回链&amp;接口探针&amp;全网扫描&amp;反向邮件">
+<meta property="og:url" content="https://tupac-2pac.github.io/2022/02/28/2022-09-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-CDN%E7%BB%95%E8%BF%87%E7%AF%87&%E6%BC%8F%E6%B4%9E%E5%9B%9E%E9%93%BE&%E6%8E%A5%E5%8F%A3%E6%8E%A2%E9%92%88&%E5%85%A8%E7%BD%91%E6%89%AB%E6%8F%8F&%E5%8F%8D%E5%90%91%E9%82%AE%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Whoami">
+<meta property="og:description" content="知识点：        CDN:内容分发网络 关键技术有内容存储和分发技术 解决访问的速度问题0、CDN知识-工作原理及阻碍1、CDN配置-域名&amp;区域&amp;类型2、CDN绕过-靠谱十余种技战法3、CDN绑定-HOSTS绑定指向访问                      前置知识：        1.传统访问：用户访问域名–&gt;解析服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/28/bKReR1.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTIYpd.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTIrtg.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTIc1s.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTIbcR.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTTYLt.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTThYF.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HT7hHP.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTHYUf.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/18/HTbXkV.png">
+<meta property="article:published_time" content="2022-02-28T08:51:01.000Z">
+<meta property="article:modified_time" content="2022-02-28T08:58:20.875Z">
+<meta property="article:author" content="Whoami">
+<meta property="article:tag" content="迪哥2022WebSec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/28/bKReR1.png"><title>2022-09-信息打点-CDN绕过篇&amp;漏洞回链&amp;接口探针&amp;全网扫描&amp;反向邮件 | Whoami</title><link ref="canonical" href="https://tupac-2pac.github.io/2022/02/28/2022-09-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-CDN%E7%BB%95%E8%BF%87%E7%AF%87&amp;%E6%BC%8F%E6%B4%9E%E5%9B%9E%E9%93%BE&amp;%E6%8E%A5%E5%8F%A3%E6%8E%A2%E9%92%88&amp;%E5%85%A8%E7%BD%91%E6%89%AB%E6%8F%8F&amp;%E5%8F%8D%E5%90%91%E9%82%AE%E4%BB%B6/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 6.0.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Whoami</div><div class="header-banner-info__subtitle">Life goes on</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">2022-09-信息打点-CDN绕过篇&amp;漏洞回链&amp;接口探针&amp;全网扫描&amp;反向邮件</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2022-02-28</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2022-02-28</span></span></div></header><div class="post-body"><p><a target="_blank" rel="noopener" href="https://imgtu.com/i/bKReR1"><img src="https://s4.ax1x.com/2022/02/28/bKReR1.png" alt="bKReR1.png"></a></p>
+
+        <h1 id="知识点："   >
+          <a href="#知识点：" class="heading-link"><i class="fas fa-link"></i></a><a href="#知识点：" class="headerlink" title="知识点："></a>知识点：</h1>
+      <blockquote>
+<p>CDN:内容分发网络 关键技术有内容存储和分发技术 解决访问的速度问题<br>0、CDN知识-工作原理及阻碍<br>1、CDN配置-域名&amp;区域&amp;类型<br>2、CDN绕过-靠谱十余种技战法<br>3、CDN绑定-HOSTS绑定指向访问</p>
+</blockquote>
+
+        <h1 id="前置知识："   >
+          <a href="#前置知识：" class="heading-link"><i class="fas fa-link"></i></a><a href="#前置知识：" class="headerlink" title="前置知识："></a>前置知识：</h1>
+      <blockquote>
+<p>1.传统访问：用户访问域名–&gt;解析服务器IP–&gt;访问目标主机<br>2.普通CDN：用户访问域名–&gt;CDN节点–&gt;真实服务器IP–&gt;访问目标主机<br>3.带WAF的CDN：用户访问域名–&gt;CDN节点（WAF）–&gt;真实服务器IP–&gt;访问目标主机</p>
+</blockquote>
+
+        <h1 id="CDN配置："   >
+          <a href="#CDN配置：" class="heading-link"><i class="fas fa-link"></i></a><a href="#CDN配置：" class="headerlink" title="CDN配置："></a>CDN配置：</h1>
+      <blockquote>
+<p>配置1：加速域名-需要启用加速的域名<br>配置2：加速区域-需要启用加速的地区<br>配置3：加速类型-需要启用加速的资源</p>
+</blockquote>
+
+        <h1 id="判定标准："   >
+          <a href="#判定标准：" class="heading-link"><i class="fas fa-link"></i></a><a href="#判定标准：" class="headerlink" title="判定标准："></a>判定标准：</h1>
+      <blockquote>
+<p>nslookup,各地ping（出现多个IP即启用CDN服务）</p>
+</blockquote>
+
+        <h1 id="参考知识："   >
+          <a href="#参考知识：" class="heading-link"><i class="fas fa-link"></i></a><a href="#参考知识：" class="headerlink" title="参考知识："></a>参考知识：</h1>
+      <blockquote>
+<p><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33440472" >https://zhuanlan.zhihu.com/p/33440472</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/blacksunny/p/5771827.html" >https://www.cnblogs.com/blacksunny/p/5771827.html</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>子域名，去掉www，邮件服务器，国外访问，证书查询，APP抓包<br>黑暗空间引擎，通过漏洞或泄露获取，扫全网，以量打量，第三方接口查询等</p>
+</blockquote>
+
+        <h1 id="案例资源："   >
+          <a href="#案例资源：" class="heading-link"><i class="fas fa-link"></i></a><a href="#案例资源：" class="headerlink" title="案例资源："></a>案例资源：</h1>
+      <blockquote>
+<p>超级Ping：<span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://www.17ce.com/" >https://www.17ce.com/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>接口查询：<span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://get-site-ip.com/" >https://get-site-ip.com/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>国外请求：<span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://tools.ipip.net/cdn.php" >https://tools.ipip.net/cdn.php</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>全网扫描：<span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://github.com/Tai7sy/fuckcdn" >https://github.com/Tai7sy/fuckcdn</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+</blockquote>
+<blockquote>
+</blockquote>
+<p>真实应用-CDN绕过-漏洞&amp;遗留文件</p>
+<blockquote>
+<p>真实应用-CDN绕过-子域名查询操作 非百分百准确<br><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://ping.chinaz.com/sp910.com"  title="超级ping">超级ping</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>实操站点: <span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://www.sp910.com/" >https://www.sp910.com/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTIYpd"><img src="https://s4.ax1x.com/2022/02/18/HTIYpd.png" alt="HTIYpd.png"></a><br>使用了CDN技术<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTIrtg"><img src="https://s4.ax1x.com/2022/02/18/HTIrtg.png" alt="HTIrtg.png"></a><br>不加www<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTIc1s"><img src="https://s4.ax1x.com/2022/02/18/HTIc1s.png" alt="HTIc1s.png"></a><br>得到真实IP<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTIbcR"><img src="https://s4.ax1x.com/2022/02/18/HTIbcR.png" alt="HTIbcR.png"></a></p>
+</blockquote>
+<blockquote>
+<p>真实应用-CDN绕过-接口查询国外访问 非百分百准确<br>老演员了  <span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://www.xuexila.com/" >https://www.xuexila.com/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTTYLt"><img src="https://s4.ax1x.com/2022/02/18/HTTYLt.png" alt="HTTYLt.png"></a><br>存在CDN技术<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTThYF"><img src="https://s4.ax1x.com/2022/02/18/HTThYF.png" alt="HTThYF.png"></a><br>思路：国外小国没那么大的网络流量 没必要用到CDN 从它那个国家ping就能搞到真实IP<br><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://tools.ipip.net/cdn.php" >https://tools.ipip.net/cdn.php</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>  需要注册才能使用 没搞了<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HT7hHP"><img src="https://s4.ax1x.com/2022/02/18/HT7hHP.png" alt="HT7hHP.png"></a><br>截迪哥的图了<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTHYUf"><img src="https://s4.ax1x.com/2022/02/18/HTHYUf.png" alt="HTHYUf.png"></a></p>
+</blockquote>
+<blockquote>
+<p>真实应用-CDN绕过-主动邮件配合备案地址  非百分百准确<br>骚操作 对方网站忘记密码找回时邮件发送过来是反向连接   显示邮件原文可以查看真实IP 然后看网站备案地址判断是否是真实IP</p>
+</blockquote>
+<blockquote>
+<p>在线一把梭判断真实IP地址  <span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://get-site-ip.com/" >https://get-site-ip.com/</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>  非百分百准确<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/HTbXkV"><img src="https://s4.ax1x.com/2022/02/18/HTbXkV.png" alt="HTbXkV.png"></a></p>
+</blockquote>
+<blockquote>
+<p>真实应用-CDN绕过-全网扫描FuckCDN<br>下载地址：<span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://github.com/Tai7sy/fuckcdn" >https://github.com/Tai7sy/fuckcdn</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>  不用配置环境 直接一键化<br>1.配置set.ini<br>2.设置IP.txt   超级ping筛选备案地区的IP写进去</p>
+</blockquote>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="https://tupac-2pac.github.io">Whoami</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="https://tupac-2pac.github.io/2022/02/28/2022-09-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-CDN%E7%BB%95%E8%BF%87%E7%AF%87&amp;%E6%BC%8F%E6%B4%9E%E5%9B%9E%E9%93%BE&amp;%E6%8E%A5%E5%8F%A3%E6%8E%A2%E9%92%88&amp;%E5%85%A8%E7%BD%91%E6%89%AB%E6%8F%8F&amp;%E5%8F%8D%E5%90%91%E9%82%AE%E4%BB%B6/">https://tupac-2pac.github.io/2022/02/28/2022-09-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-CDN%E7%BB%95%E8%BF%87%E7%AF%87&amp;%E6%BC%8F%E6%B4%9E%E5%9B%9E%E9%93%BE&amp;%E6%8E%A5%E5%8F%A3%E6%8E%A2%E9%92%88&amp;%E5%85%A8%E7%BD%91%E6%89%AB%E6%8F%8F&amp;%E5%8F%8D%E5%90%91%E9%82%AE%E4%BB%B6/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="https://tupac-2pac.github.io/tags/%E8%BF%AA%E5%93%A52022WebSec/">迪哥2022WebSec</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2022/02/28/2022-10-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-APP&amp;%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%AF%87&amp;%E6%8A%93%E5%8C%85%E5%B0%81%E5%8C%85&amp;XP%E6%A1%86%E6%9E%B6&amp;%E5%8F%8D%E7%BC%96%E8%AF%91&amp;%E8%B5%84%E4%BA%A7%E6%8F%90%E5%8F%96/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">2022-10-信息打点-APP&amp;小程序篇&amp;抓包封包&amp;XP框架&amp;反编译&amp;资产提取</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2022/02/28/2022-08-%E4%BF%A1%E6%81%AF%E6%89%93%E7%82%B9-%E7%B3%BB%E7%BB%9F%E7%AF%87&amp;%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F&amp;CDN%E6%9C%8D%E5%8A%A1&amp;%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&amp;WAF%E9%98%B2%E7%81%AB%E5%A2%99/"><span class="paginator-prev__text">2022-08-信息打点-系统篇&amp;端口扫描&amp;CDN服务&amp;负载均衡&amp;WAF防火墙</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">
+          知识点：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">
+          前置知识：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CDN%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">
+          CDN配置：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A4%E5%AE%9A%E6%A0%87%E5%87%86%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">
+          判定标准：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">
+          参考知识：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E8%B5%84%E6%BA%90%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">
+          案例资源：</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/assets/xigonxiaozi.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">一个平凡的梦想.</p></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">24</div><div class="sidebar-ov-state-item__name">归档</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">1</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">5</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2022</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Whoami</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script></body></html>
