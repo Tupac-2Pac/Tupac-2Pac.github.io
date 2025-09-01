@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+<html>
 <body>
-  
+<script>
+  // 定义合法的回调函数
+  function validCallback(data) {
+    alert("XSS: " + data);
+  }
+  // 通过URL参数传递函数名
+  const callback = new URLSearchParams(location.search).get('callback');
+  if (callback) window[callback]("Payload");
+</script>
 </body>
-<script>alert("XSS via XHR response")</script>
 </html>
